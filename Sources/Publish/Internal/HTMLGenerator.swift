@@ -11,12 +11,13 @@ internal struct HTMLGenerator<Site: Website> {
     let theme: Theme<Site>
     let indentation: Indentation.Kind?
     let fileMode: HTMLFileMode
+    let ignoreSections: Set<Site.SectionID>?
     let context: PublishingContext<Site>
 
     func generate() throws {
         try copyThemeResources()
         try generateIndexHTML()
-        try generateSectionHTML()
+        try generateSectionHTML(ignore: ignoreSections)
         try generatePageHTML()
         try generateTagHTMLIfNeeded()
     }
@@ -51,8 +52,9 @@ private extension HTMLGenerator {
         try indexFile.write(html.render(indentedBy: indentation))
     }
 
-    func generateSectionHTML() throws {
-        for section in context.sections {
+    func generateSectionHTML(ignore: Set<Site.SectionID>?) throws {
+        let ignoredSections = ignore ?? []
+        for section in context.sections where !ignoredSections.contains(section.id) {
             try outputHTML(
                 for: section,
                 indentedBy: indentation,
