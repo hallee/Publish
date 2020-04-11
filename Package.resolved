@@ -30,11 +30,11 @@
       },
       {
         "package": "Plot",
-        "repositoryURL": "https://github.com/johnsundell/plot.git",
+        "repositoryURL": "https://github.com/pixel-foundry/plot.git",
         "state": {
-          "branch": null,
-          "revision": "6dcfc1f246eabf6ea470202244115f73b75c72c4",
-          "version": "0.6.0"
+          "branch": "master",
+          "revision": "11b06f66832a34a6d94f534659f221a1c3bc1074",
+          "version": null
         }
       },
       {

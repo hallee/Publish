@@ -28,7 +28,8 @@ public extension Node where Context == HTML.DocumentContext {
         titleSeparator: String = " | ",
         stylesheetPaths: [Path] = ["/styles.css"],
         rssFeedPath: Path? = .defaultForRSSFeed,
-        rssFeedTitle: String? = nil
+        rssFeedTitle: String? = nil,
+        viewportFitMode: HTMLViewportFitMode? = nil
     ) -> Node {
         var title = location.title
 
@@ -52,7 +53,7 @@ public extension Node where Context == HTML.DocumentContext {
             .description(description),
             .twitterCardType(location.imagePath == nil ? .summary : .summaryLargeImage),
             .forEach(stylesheetPaths, { .stylesheet($0) }),
-            .viewport(.accordingToDevice),
+            .viewport(.accordingToDevice, fit: viewportFitMode),
             .unwrap(site.favicon, { .favicon($0) }),
             .unwrap(rssFeedPath, { path in
                 let title = rssFeedTitle ?? "Subscribe to \(site.name)"
