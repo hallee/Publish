@@ -14,4 +14,6 @@ public enum HTMLFileMode {
     /// HTML index files wrapped in folders should be generated, so that
     /// `section/item` becomes `section/item/index.html`.
     case foldersAndIndexFiles
+    /// Each section is treated as a stand-alone page, and pages for section items are not generated.
+    case sectionIndexesOnly
 }

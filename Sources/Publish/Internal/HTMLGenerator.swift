@@ -131,17 +131,20 @@ private extension HTMLGenerator {
         fileMode: HTMLFileMode
     ) throws {
         let html = try generator(location, context)
-        let path = filePath(for: location, fileMode: fileMode)
-        let file = try context.createOutputFile(at: path)
-        try file.write(html.render(indentedBy: indentation))
+        if let path = filePath(for: location, fileMode: fileMode) {
+            let file = try context.createOutputFile(at: path)
+            try file.write(html.render(indentedBy: indentation))
+        }
     }
 
-    func filePath(for location: Location, fileMode: HTMLFileMode) -> Path {
+    func filePath(for location: Location, fileMode: HTMLFileMode) -> Path? {
         switch fileMode {
         case .foldersAndIndexFiles:
             return "\(location.path)/index.html"
         case .standAloneFiles:
             return "\(location.path).html"
+        case .sectionIndexesOnly:
+            return nil
         }
     }
 }
