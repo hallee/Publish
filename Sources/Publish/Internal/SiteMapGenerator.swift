@@ -8,6 +8,7 @@ import Plot
 
 struct SiteMapGenerator<Site: Website> {
     let excludedPaths: Set<Path>
+    let fileMode: Publish.HTMLFileMode
     let indentation: Indentation.Kind?
     let context: PublishingContext<Site>
 
@@ -45,18 +46,20 @@ private extension SiteMapGenerator {
                             section.lastItemModificationDate ?? .distantPast
                         ))
                     ),
-                    .forEach(section.items) { item in
-                        guard !excludedPaths.contains(item.path) else {
-                            return .empty
-                        }
+                    .if(fileMode != .sectionIndexesOnly,
+                        .forEach(section.items) { item in
+                            guard !excludedPaths.contains(item.path) else {
+                                return .empty
+                            }
 
-                        return .url(
-                            .loc(site.url(for: item)),
-                            .changefreq(.monthly),
-                            .priority(0.5),
-                            .lastmod(item.lastModified)
-                        )
-                    }
+                            return .url(
+                                .loc(site.url(for: item)),
+                                .changefreq(.monthly),
+                                .priority(0.5),
+                                .lastmod(item.lastModified)
+                            )
+                        }
+                    )
                 )
             },
             .forEach(pages) { page in

@@ -384,10 +384,12 @@ public extension PublishingStep {
     ///   Adding a section's path to the list removes the entire section, including all its items.
     /// - parameter indentation: How the site map should be indented.
     static func generateSiteMap(excluding excludedPaths: Set<Path> = [],
+                                fileMode: Publish.HTMLFileMode = .foldersAndIndexFiles,
                                 indentedBy indentation: Indentation.Kind? = nil) -> Self {
         step(named: "Generate site map") { context in
             let generator = SiteMapGenerator(
                 excludedPaths: excludedPaths,
+                fileMode: fileMode,
                 indentation: indentation,
                 context: context
             )
