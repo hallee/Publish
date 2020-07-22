@@ -134,6 +134,26 @@ public extension PublishingStep {
             try MarkdownFileHandler().addMarkdownFiles(in: folder, generatePages: generatePages, to: &context)
         }
     }
+    
+    /// Remove all items matching a predicate, optionally within a specific section.
+    /// - parameter section: Any specific section to remove all items within.
+    /// - parameter predicate: Any predicate to filter the items using.
+    static func removeAllItems(
+        in section: Site.SectionID? = nil,
+        matching predicate: Predicate<Item<Site>> = .any
+    ) -> Self {
+        let nameSuffix = section.map { " in '\($0)'" } ?? ""
+
+        return step(named: "Remove items" + nameSuffix) { context in
+            if let section = section {
+                context.sections[section].removeItems(matching: predicate)
+            } else {
+                for section in context.sections.ids {
+                    context.sections[section].removeItems(matching: predicate)
+                }
+            }
+        }
+    }
 
     /// Mutate all items matching a predicate, optionally within a specific section.
     /// - parameter section: Any specific section to mutate all items within.
@@ -380,17 +400,21 @@ public extension PublishingStep where Site.ItemMetadata: PodcastCompatibleWebsit
     /// Note that all of the items within the given section must define `podcast`
     /// and `audio` metadata, or an error will be thrown.
     /// - parameter section: The section to generate a podcast feed for.
+    /// - parameter itemPredicate: A predicate used to determine whether to
+    ///   include a given item within the generated feed (default: include all).
     /// - parameter config: The configuration to use when generating the feed.
     /// - parameter date: The date that should act as the build and publishing
     ///   date for the generated feed (default: the current date).
     static func generatePodcastFeed(
         for section: Site.SectionID,
+        itemPredicate: Predicate<Item<Site>>? = nil,
         config: PodcastFeedConfiguration<Site>,
         date: Date = Date()
     ) -> Self {
         step(named: "Generate podcast feed") { context in
             let generator = PodcastFeedGenerator(
                 sectionID: section,
+                itemPredicate: itemPredicate,
                 config: config,
                 context: context,
                 date: date
